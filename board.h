@@ -10,7 +10,7 @@ class Board {
   std::vector<State> board_;
   int n_;
   
-  int CountInfectedNeighbours(int i);
+  int countInfectedNeighbours(int i);
   void change(int i);
   
 public:
