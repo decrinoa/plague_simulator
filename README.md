@@ -1,7 +1,6 @@
 # plague-simulator
 Potete scaricare tutti i file sul computer con il codice: <br>
 <code>git clone https://github.com/progetto-manhattan/plague-simulator </code> <br>
-Vi chiederà nome utente e password di github, visto la repo è privata<br>
 Una volta scaricato, per aggiornare i file vi basta usare questi due comandi: <br>
 <code>cd plague-simulator</code> <br>
 <code>git pull</code> <br><br>
