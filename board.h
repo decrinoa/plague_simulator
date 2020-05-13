@@ -14,6 +14,7 @@ class Board {
   void change(int i);
   
 public:
+  inline Board(int n) : board_(n*n), n_{n}, displayCreated_{false} { assert(n > 0); };
 
 }
 
