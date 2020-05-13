@@ -4,7 +4,7 @@
 #include <vector>
 #include <cassert>
 
-enum class State : char { Empty, Susceptible, Infected, Recovered};
+enum class State : char { Empty, Susceptible, Infected, Recovered}; //In un futuro aggiungere anche Dead
 
 class Board {
   std::vector<State> board_;
