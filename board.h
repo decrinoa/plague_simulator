@@ -15,6 +15,8 @@ class Board {
   
 public:
   inline Board(int n) : board_(n*n), n_{n}, displayCreated_{false} { assert(n > 0); };
+  
+  void placePeople(int numberOfPeople); //places randomly n susceptible people on the board
 
 }
 
