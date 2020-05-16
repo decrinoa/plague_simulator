@@ -4,6 +4,11 @@
 #include <vector>
 #include <cassert>
 
+struct Disease {
+  double const& beta;   //probability of infection being next to an infected person
+  double const& gamma;  //probability of recovery
+};
+
 enum class State : char { Empty, Susceptible, Infected, Recovered}; //In un futuro aggiungere anche Dead
 
 class Board {
