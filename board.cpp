@@ -48,3 +48,27 @@ void Board::change(int i) {
       std::cout << "Error in change(int i) funcion: board_[" << i << "] is Recovered or an unknown State\n";
   }
 }
+
+//PUBLIC
+
+void Board::placePeople(int numberOfPeople, State const&state) {
+  //Actually there's no need for assert >= 0: putting a value < 0 does not break the program
+  assert(numberOfPeople >= 0);
+  
+  //the number of people to put in the grid must be less (or equal) to the number of empty cells
+  assert(numberOfPeople <= count(State::Empty));
+
+  std::random_device gen;
+  
+  //It will contain the position of all empty cells
+  std::vector<int> emptyCells;
+  for (int i = 0, end = board_.size(); i < end; ++i) {
+    if (board_[i] == State::Empty)
+      emptyCells.push_back(i);
+  }
+
+  shuffle (emptyCells.begin(), emptyCells.end(), gen);
+  for (int i = 0; i < numberOfPeople; ++i) {
+    board_[emptyCells[i]] = state;
+  }
+}
