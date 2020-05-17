@@ -5,8 +5,9 @@
 #include <cassert>
 
 struct Disease {
-  double const& beta;   //probability of infection being next to an infected person
+  double const& beta;   //probability of infection being nearer than radius to an infected person
   double const& gamma;  //probability of recovery
+  double const& radius = 1.41421356237; //sqrt(2)
 };
 
 enum class State : char { Empty, Susceptible, Infected, Recovered}; //In un futuro aggiungere anche Dead
@@ -16,6 +17,7 @@ class Board {
   int n_;
   
   int countInfectedNeighbours(int i);
+  int countNearerThanRadius(int position, double radius);
   void change(int i);
   
 public:
