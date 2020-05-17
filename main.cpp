@@ -3,7 +3,7 @@
 
 int main() {
   Board griglia(40);
-  Disease tetano{0.5,0.001};
+  Disease tetano{0.5,0.001,3};
 
   griglia.placePeople(25);
   griglia.placePeople(1,State::Infected)
