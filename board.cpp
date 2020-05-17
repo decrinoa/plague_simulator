@@ -31,6 +31,22 @@ int Board::countInfectedNeighbours(int i) {
   return count;
 }
 
+int Board::countNearerThanRadius(int position, double radius) {
+  assert(board_[position] == State::Susceptible);
+
+  int count = 0;
+
+  for (int i = 0, end = board_.size(); i < end; ++i) {
+    if (board_[i] == State::Infected) {
+      //col = (i%n), row = (i/n)
+      double distance = sqrt((i%n_ - position%n_)*(i%n_ - position%n_) + (i/n_ - position/n_)*(i/n_ - position/n_));
+      if (distance <= radius) ++count;
+    }
+  }
+
+  return count;
+}
+
 void Board::change(int i) { 
   //change State of cell from E->S, S->I, I->R
   
