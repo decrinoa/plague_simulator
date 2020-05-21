@@ -1,6 +1,9 @@
-#include board.h
+#include "board.h"
 #include <cassert>
 #include <iostream>
+#include <random>
+#include <algorithm>  //for shuffle
+#include <cmath>
 
 int Board::countInfectedNeighbours(int i) {
   assert(board_[i] == State::Susceptible);
@@ -51,13 +54,13 @@ void Board::change(int i) {
   //change State of cell from E->S, S->I, I->R
   
   switch(board_[i]) {
-    case State::Empty ;
+    case State::Empty :
       board_[i] == State::Susceptible;
       break;
-    case State::Susceptible;
+    case State::Susceptible :
       board_[i] == State::Infected;
       break;
-    case State::Infected;
+    case State::Infected :
       board_[i] == State::Recovered;
       break;
     default: 
@@ -72,7 +75,7 @@ void Board::placePeople(int numberOfPeople, State const&state) {
   assert(numberOfPeople >= 0);
   
   //the number of people to put in the grid must be less (or equal) to the number of empty cells
-  assert(numberOfPeople <= count(State::Empty));
+  //assert(numberOfPeople <= count(State::Empty));          //bisogna scrivere la funzione count(State &state);
 
   std::random_device gen;
   
