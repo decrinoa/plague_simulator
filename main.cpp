@@ -6,10 +6,12 @@ int main() {
   Disease tetano{0.5,0.001,3};
 
   griglia.placePeople(1000);
-  griglia.placePeople(1,State::Infected)
+  griglia.placePeople(1,State::Infected);
 
   //ANIMATION
   
   griglia.draw(5);
 
+  std::cout << "Press RETURN to close this window\n";
+  std::cin.ignore();
 }
