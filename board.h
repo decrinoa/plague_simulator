@@ -16,6 +16,7 @@ enum class State : char { Empty, Susceptible, Infected, Recovered}; //In un futu
 class Board {
   std::vector<State> board_;
   int n_;
+  sf::RenderWindow window_;
   bool displayCreated_;
   
   int countInfectedNeighbours(int i);
@@ -28,6 +29,6 @@ public:
   void placePeople(int numberOfPeople, State const&state = State::Susceptible); //places randomly nPeople on the board
   
   void draw(int cellSize = 10, std::string windowTitle = "Plague simulator"); //draw board with SFML
-}
+};
 
 #endif  //BOARD_H
