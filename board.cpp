@@ -88,3 +88,40 @@ void Board::placePeople(int numberOfPeople, State const&state) {
     board_[emptyCells[i]] = state;
   }
 }
+
+void Board::draw(int cellSize, std::string windowTitle) {
+  if (displayCreated_ == false) {
+    //create display
+    window_.create(sf::VideoMode(n_*cellSize, n_*cellSize), windowTitle, sf::Style::Close);
+    displayCreated_ = true;
+  }
+
+  //update display
+  window_.clear(sf::Color::Black);
+
+  sf::CircleShape circle(cellSize/2); //radius = cellSize/2
+  circle.setOutlineThickness(0);
+  circle.setOutlineColor(sf::Color::White);
+
+  for (int i = 0, end = board_.size(); i < end; ++i) {
+    if (board_[i] == State::Susceptible) {
+      circle.setFillColor(sf::Color::White);
+      circle.setPosition((i % n_) * cellSize, (i / n_) * cellSize);   //col = (i%n), row = (i/n)
+      window_.draw(circle);
+    }
+
+    if (board_[i] == State::Infected) {
+      circle.setFillColor(sf::Color::Red);
+      circle.setPosition((i % n_) * cellSize, (i / n_) * cellSize);   //col = (i%n), row = (i/n)
+      window_.draw(circle);
+    }
+
+    if (board_[i] == State::Recovered) {
+      circle.setFillColor(sf::Color::Blue);
+      circle.setPosition((i % n_) * cellSize, (i / n_) * cellSize);   //col = (i%n), row = (i/n)
+      window_.draw(circle);
+    }
+  }
+  
+  window_.display();
+}
