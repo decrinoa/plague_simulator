@@ -69,14 +69,18 @@ void Board::change(int i) {
 }
 
 //PUBLIC
+State& Board::State(int i) {
+  assert(i >= 0 && i <= board_.size());
+  return board_[i];
+}
 
 void Board::placePeople(int numberOfPeople, State const&state) {
   //Actually there's no need for assert >= 0: putting a value < 0 does not break the program
   assert(numberOfPeople >= 0);
   
   //the number of people to put in the grid must be less (or equal) to the number of empty cells
-  //assert(numberOfPeople <= count(State::Empty));          //bisogna scrivere la funzione count(State &state);
-
+  assert(numberOfPeople <= count(State::Empty));     
+  
   std::random_device gen;
   
   //It will contain the position of all empty cells
