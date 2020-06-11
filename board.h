@@ -19,6 +19,13 @@ class Board {
   sf::RenderWindow window_;
   bool displayCreated_;
   
+  struct Situation {
+    int susceptible;
+    int infected;
+    int recovered;
+  };
+  std::vector<Situation> history_;
+  
   int countInfectedNeighbours(int i);
   int countNearerThanRadius(int position, double radius);
   void change(int i);
@@ -27,8 +34,9 @@ public:
   inline Board(int n) : board_(n*n), n_{n}, displayCreated_{false} { assert(n > 0); };
   
   State& state(int i);  //get board[i]
-  
   void setInfected(int row, int col);  //place an infected person on the board
+  inline std::vector<Situation> history() {return history_;};
+  
   int count(State const& state);
   void placePeople(int numberOfPeople, State const&state = State::Susceptible); //places randomly nPeople on the board
   void draw(int cellSize = 10, std::string windowTitle = "Plague simulator"); //draw board with SFML
