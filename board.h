@@ -26,8 +26,11 @@ class Board {
 public:
   inline Board(int n) : board_(n*n), n_{n}, displayCreated_{false} { assert(n > 0); };
   
-  void placePeople(int numberOfPeople, State const&state = State::Susceptible); //places randomly nPeople on the board
+  State& state(int i);  //get board[i]
   
+  void setInfected(int row, int col);  //place an infected person on the board
+  int count(State const& state);
+  void placePeople(int numberOfPeople, State const&state = State::Susceptible); //places randomly nPeople on the board
   void draw(int cellSize = 10, std::string windowTitle = "Plague simulator"); //draw board with SFML
 };
 
