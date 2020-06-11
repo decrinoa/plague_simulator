@@ -74,6 +74,20 @@ State& Board::State(int i) {
   return board_[i];
 }
 
+void Board::setInfected(int row, int col) {
+  assert (row < n_ && col < n_);
+  board_[row * n_ + col] = State::Infected;
+}
+
+int Board::count(State const& state) {
+  int count = 0;
+  for (auto const& v : board_) {
+    if (v == state)
+      ++count;
+  }
+  return count;
+}
+
 void Board::placePeople(int numberOfPeople, State const&state) {
   //Actually there's no need for assert >= 0: putting a value < 0 does not break the program
   assert(numberOfPeople >= 0);
