@@ -122,6 +122,17 @@ void Board::evolve(Disease &disease, bool quarantine) {
 
   std::vector<int> toChange;
   //qui bisogna mettere il legame con la funzione quarantine che è da definire//
+   
+  if (quarantine) { //RETURN FROM QUARANTINE
+    int recoveredFromQuarantine = 0;
+    for (int i = 0; i < peopleInQuarantine_; ++i) {
+      if (dist(gen) < disease.gamma) {      
+        placePeople(1, State::Recovered);  //place 1 person on the grid
+        ++recoveredFromQuarantine;
+      }
+    }
+    peopleInQuarantine_ -= recoveredFromQuarantine;
+  }
   
   for (int i = 0, end = board_.size(); i < end; ++i) {
     if (board_[i] == State::Susceptible) {
