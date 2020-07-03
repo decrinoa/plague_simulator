@@ -110,6 +110,13 @@ void Board::placePeople(int numberOfPeople, State const&state) {
   }
 }
 
+//
+void Board::evolve(Disease &disease) {
+  assert(disease.beta_ > 0 && disease.beta_ < 1);
+  assert(disease.gamma_ > 0 && disease.gamma_< 1 );
+}
+//
+
 void Board::draw(int cellSize, std::string windowTitle) {
   if (displayCreated_ == false) {
     //create display
