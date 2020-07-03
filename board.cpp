@@ -110,12 +110,60 @@ void Board::placePeople(int numberOfPeople, State const&state) {
   }
 }
 
-//
-void Board::evolve(Disease &disease) {
+//------------------------------------------------------------------------
+void Board::evolve(Disease &disease, bool quarantine) {
   assert(disease.beta_ > 0 && disease.beta_ < 1);
-  assert(disease.gamma_ > 0 && disease.gamma_< 1 );
+  assert(disease.gamma_  >= 0 && disease.gamma_ <= 1 );
+  assert(disease.radius >= 1);
+  assert(disease.manifestation >= 0 && disease.manifestation <= 1);
+  
+  std::random_device gen;   
+  std::uniform_real_distribution<double> dist(0.0,1.0);
+
+  std::vector<int> toChange;
+  //qui bisogna mettere il legame con la funzione quarantine che è da definire//
+  
+  for (int i = 0, end = board_.size(); i < end; ++i) {
+    if (board_[i] == State::Susceptible) {
+      
+      for (int j = 0, endJ = board_.size(); j < endJ; ++j) {
+        if (board_[j] == State::Infected) {
+          
+          if(distance(i,j) <= disease.radius) {
+            if (dist(gen) < disease.beta) { 
+              toChange.push_back(i);
+              break;    
+            }
+          }
+          else{    //if (distance > radius)
+            // Se la colonna dell'infetto è maggiore del suscettibile che sto controllando (i), e sono tra loro   
+            // troppo lontani, saranno troppo lontani anche tutti i prossimi infettti su tutta la linea. 
+            // Aumento quindi j di quelli rimanenti nella riga, passo cioè alla riga dopo
+            
+            //questa non l'ho capita :/ me la dovete spiegare (MF)
+            if (j%n_ > i%n_)
+              j += n_ - (j%n_);
+          }
+        }  
+      }
+    }
+        if (board_[i] == State::Infected) {   //RECOVER OF INFECTED
+      if (dist(gen) < disease.gamma) //cioè con probabilità = gamma
+        toChange.push_back(i);
+      if (quarantine && dist(gen) < disease.manifestation) {  //questo aggiunge alla quarantena ma la quarantena la dobbiamo sistemare (dico a te MG)
+        board_[i] = State::Empty;
+        ++peopleInQuarantine_;
+      }
+    }
+  }
+
+  for (auto const& v : toChange) 
+    change(v);
+
+  //UPDATE HISTORY
+  history_.push_back({count(State::Susceptible), count(State::Infected), count(State::Recovered), peopleInQuarantine_});  //legame con history
 }
-//
+//----------------------------------------------------
 
 void Board::draw(int cellSize, std::string windowTitle) {
   if (displayCreated_ == false) {
