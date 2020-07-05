@@ -4,6 +4,7 @@
 #include <random>
 #include <algorithm>  //for shuffle
 #include <cmath>
+#include <fstream>
 
 int Board::countInfectedNeighbours(int i) {
   assert(board_[i] == State::Susceptible);
@@ -211,4 +212,13 @@ void Board::draw(int cellSize, std::string windowTitle) {
   }
   
   window_.display();
+}
+ //stampa su doc dati per grafici 
+void Board::save(std::string fileName) {
+  std::ofstream out(fileName);
+  auto it = history_.begin();
+  for (it; it != history_.end(); ++it) {
+    out << it->susceptible << '\t' << it->infected << '\t' << it->recovered << '\t' << it->quarantined << '\n';
+  }
+  out.close();
 }
