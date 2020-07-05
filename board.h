@@ -39,12 +39,13 @@ public:
   
   State& state(int i);  //get board[i]
   void setInfected(int row, int col);  //place an infected person on the board
-  inline std::vector<Situation> history() {return history_;};
+  inline int peopleInQuarantine() { return peopleInQuarantine_;};
   
   int count(State const& state);
   void placePeople(int numberOfPeople, State const&state = State::Susceptible); //places randomly nPeople on the board
   void draw(int cellSize = 10, std::string windowTitle = "Plague simulator"); //draw board with SFML
   void evolve(Disease &disease, bool quarantine = true);
+  void save(std::string fileName = "output.txt");
 };
 
 #endif  //BOARD_H
