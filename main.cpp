@@ -14,4 +14,7 @@ int main() {
 
   std::cout << "Press RETURN to close this window\n";
   std::cin.ignore();
+  
+  griglia.save("data.txt");
+  std:cout << "Data saved.\n";
 }
