@@ -222,3 +222,28 @@ void Board::save(std::string fileName) {
   }
   out.close();
 }
+
+void Board::print() {
+  for (int i = 0, end = board_.size(); i < end; ++i) {
+    if (i != 0 && i % n_ == 0) std::cout << '\n';
+    
+    switch(board_[i]) {
+      case State::Empty :
+        std::cout << ' ';
+        break;
+      case State::Susceptible :
+        std::cout << 'O';
+        break;
+      case State::Infected :
+        std::cout << 'X';
+        break;
+      case State::Recovered :
+        std::cout << '.';
+        break;
+      default:
+        std::cout << "Strange error in print() funcion: board_[" << i << "] is an unknown State\n";
+    }
+    std::cout << ' ';
+  }
+  std::cout << "\n\n";
+}
