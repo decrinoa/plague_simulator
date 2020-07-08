@@ -15,11 +15,6 @@ struct Disease {
 enum class State : char { Empty, Susceptible, Infected, Recovered}; //In un futuro aggiungere anche Dead
 
 class Board {
-  std::vector<State> board_;
-  int n_;
-  sf::RenderWindow window_;
-  bool displayCreated_;
-  
   struct Situation {
     int susceptible;
     int infected;
@@ -27,6 +22,10 @@ class Board {
     int quarantined;
   };
   
+  std::vector<State> board_;
+  int n_;
+  sf::RenderWindow window_;
+  bool displayCreated_;
   std::vector<Situation> history_;
   int peopleInQuarantine_;
   
