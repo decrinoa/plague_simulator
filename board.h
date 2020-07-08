@@ -31,6 +31,8 @@ class Board {
   int peopleInQuarantine_;
   
   int countInfectedNeighbours(int i);
+  inline double distance(int i, int j) {     //get distance between two cells
+    return sqrt((i%n_ - j%n_)*(i%n_ - j%n_) + (i/n_ - j/n_)*(i/n_ - j/n_)); }
   int countNearerThanRadius(int position, double radius);
   void change(int i);
   
