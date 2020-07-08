@@ -132,6 +132,34 @@ int Board::countNearerThanRadius(int position, double radius) {
   return count;
 }
 
+if(distance(i,j) <= disease.radius) {
+            if (dist(gen) < disease.beta) {   //dist(gen) is a random number between 0. and 1. - cioè con probabilità = beta
+              toChange.push_back(i);
+              break;    //break è importante. Altrimenti lo i può venire aggiunto più volte a toChange e diventerà subito recovered
+            }
+          }
+          else{    //if (distance > radius)
+            // Se la colonna dell'infetto è maggiore del suscettibile che sto controllando (i), e sono tra loro 
+            // troppo lontani, saranno troppo lontani anche tutti i prossimi infettti su tutta la linea. 
+            // Aumento quindi j di quelli rimanenti nella riga, passo cioè alla riga dopo
+            if (j%n_ > i%n_)
+              j += n_ - (j%n_);
+          }
+        }  
+      }
+    }
+
+    /* OLD
+      //for each infected neighbours, there's a (same) probability of infection
+      //OLD: for (int j = 0, n = countInfectedNeighbours(i); j < n; ++j) {
+      for (int j = 0, n = countNearerThanRadius(i,disease.radius); j < n; ++j) {
+        if (caso < disease.beta) { //cioè con probabilità = beta
+          toChange.push_back(i);
+          break;    //break è importante. Altrimenti lo aggiungerà più volte e diventerà subito recovered
+        }
+      }
+    } */
+
 void Board::change(int i) { 
   //change State of cell from E->S, S->I, I->R
   
@@ -298,8 +326,9 @@ void Board::draw(int cellSize, std::string windowTitle) {
 //stampa su doc dati per grafici 
 void Board::save(std::string fileName) {
   std::ofstream out(fileName);
+  auto it = history_.begin();
   auto end = history_.end();
-  for (auto it = history_.begin(); it != end(); ++it) {
+  for (it; it != end(); ++it) {
     out << it - begin << '\t' << it->susceptible << '\t' << it->infected << '\t' << it->recovered << '\t' << it->quarantined << '\n';
   }
   out.close();
