@@ -301,7 +301,7 @@ void Board::save(std::string fileName) {
   auto it = history_.begin();
   auto end = history_.end();
   for (it; it != end(); ++it) {
-    out << it->susceptible << '\t' << it->infected << '\t' << it->recovered << '\t' << it->quarantined << '\n';
+    out << it - begin << '\t' << it->susceptible << '\t' << it->infected << '\t' << it->recovered << '\t' << it->quarantined << '\n';
   }
   out.close();
 }
