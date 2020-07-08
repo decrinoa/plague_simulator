@@ -213,11 +213,13 @@ void Board::draw(int cellSize, std::string windowTitle) {
   
   window_.display();
 }
- //stampa su doc dati per grafici 
+
+//stampa su doc dati per grafici 
 void Board::save(std::string fileName) {
   std::ofstream out(fileName);
   auto it = history_.begin();
-  for (it; it != history_.end(); ++it) {
+  auto end = history_.end();
+  for (it; it != end(); ++it) {
     out << it->susceptible << '\t' << it->infected << '\t' << it->recovered << '\t' << it->quarantined << '\n';
   }
   out.close();
