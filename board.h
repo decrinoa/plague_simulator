@@ -31,8 +31,6 @@ class Board {
   int peopleInQuarantine_;
   
   int countInfectedNeighbours(int i);
-  inline double distance(int i, int j) {     //get distance between two cells
-    return sqrt((i%n_ - j%n_)*(i%n_ - j%n_) + (i/n_ - j/n_)*(i/n_ - j/n_)); }
   int countNearerThanRadius(int position, double radius);
   void change(int i);
   
@@ -47,6 +45,7 @@ public:
   void placePeople(int numberOfPeople, State const&state = State::Susceptible); //places randomly nPeople on the board
   void draw(int cellSize = 10, std::string windowTitle = "Plague simulator"); //draw board with SFML
   void move();
+  void print();
   void evolve(Disease &disease, bool quarantine = true);
   void save(std::string fileName = "output.txt");
 };
