@@ -298,9 +298,8 @@ void Board::draw(int cellSize, std::string windowTitle) {
 //stampa su doc dati per grafici 
 void Board::save(std::string fileName) {
   std::ofstream out(fileName);
-  auto it = history_.begin();
   auto end = history_.end();
-  for (it; it != end(); ++it) {
+  for (auto it = history_.begin(); it != end(); ++it) {
     out << it - begin << '\t' << it->susceptible << '\t' << it->infected << '\t' << it->recovered << '\t' << it->quarantined << '\n';
   }
   out.close();
