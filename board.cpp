@@ -6,6 +6,87 @@
 #include <cmath>
 #include <fstream>
 
+void Board::move() {
+  
+  //equal probability of going to the left (cell i-1), up (i-n), right (i+1), down (i+n) or stay
+  std::random_device gen;
+  std::uniform_int_distribution<int> dist(0, 5); //5 possibility
+
+  //It's better to start once from begin and once from end, otherwise there'll be a tendency to go to the top right corner
+  //Try to comment these lines and run a 40x40 board with 300 people if you don't believe this
+  int begin = 0;
+  int end = board_.size();
+  int increment = 1;
+  if (gen() % 2) { //gen() is a (big) random int number
+    begin = end;
+    end = 0;
+    increment = -1;
+  }
+
+  for (int i = begin; i != end; i += increment) {
+    if (board_[i] == State::Susceptible || board_[i] == State::Infected || board_[i] == State::Recovered) {
+         
+      int direction = dist(gen);
+
+      //These checkings is similar to countInfectedNeighbours (so I'll put no comments)
+      switch (direction) {
+        case 0: //left
+          //Warning: Do not swap these checkings. If you access board_[i-1] before cheking if i % n_ != 0, 
+          //board[i-1] could not exist -> Undefined behavior
+          if (i % n_ != 0 && board_[i-1] == State::Empty) {  
+            board_[i-1] = board_[i];  //the new cell take the old state
+            board_[i] = State::Empty; //the old cell is now empty
+          }
+          //it bounces on the border of the grid or onto another person (if the opposite cell is empty):
+          else if(i % n_ != n_ -1 && board_[i+1] == State::Empty) {
+            board_[i+1] = board_[i];
+            board_[i] = State::Empty;
+          }
+          break;
+        case 1: //up
+          if (i / n_!= 0 && board_[i-n_] == State::Empty) {
+            board_[i-n_] = board_[i];
+            board_[i] = State::Empty;
+          }
+          else if(i / n_ != n_-1 && board_[i+n_] == State::Empty) {
+            board_[i+n_] = board_[i];
+            board_[i] = State::Empty;
+          }
+          break;
+        case 2: //right
+          if (i % n_ != n_- 1 && board_[i+1] == State::Empty) {
+            board_[i+1] = board_[i];
+            board_[i] = State::Empty;
+          }
+          else if(i % n_ != 0 && board_[i-1] == State::Empty) {
+            board_[i-1] = board_[i];
+            board_[i] = State::Empty;
+          }
+          break;
+        case 3: //down
+          if (i / n_!= n_- 1 && board_[i+n_] == State::Empty) {
+            board_[i+n_] = board_[i];
+            board_[i] = State::Empty;
+          }
+          else if(i / n_ != 0 && board_[i-n_] == State::Empty) {
+            board_[i-n_] = board_[i];
+            board_[i] = State::Empty;
+          }
+          //break; //Not necessary 'cause it's the last case: it'll break anyway
+        //case 4: //stay
+          //do nothing          
+      }
+    }
+  }
+}
+
+
+
+
+
+
+
+
 int Board::countInfectedNeighbours(int i) {
   assert(board_[i] == State::Susceptible);
   
