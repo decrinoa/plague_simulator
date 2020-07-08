@@ -29,8 +29,8 @@ class Board {
   std::vector<Situation> history_;
   int peopleInQuarantine_;
   
-  int countInfectedNeighbours(int i);
-  int countNearerThanRadius(int position, double radius);
+ // int countInfectedNeighbours(int i);
+ // int countNearerThanRadius(int position, double radius);
   void change(int i);
   
 public:
