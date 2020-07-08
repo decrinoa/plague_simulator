@@ -3,7 +3,7 @@
 
 int main() {
   Board griglia(240);
-  Disease tetano{0.5,0.001,3};
+  Disease tetano{0.5,0.001,3, 0.2};
 
   griglia.placePeople(1000);
   griglia.placePeople(1,State::Infected);
@@ -16,5 +16,5 @@ int main() {
   std::cin.ignore();
   
   griglia.save("data.txt");
-  std:cout << "Data saved.\n";
+  std::cout << "Data saved.\n";
 }
