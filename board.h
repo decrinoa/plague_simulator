@@ -44,6 +44,7 @@ public:
   int count(State const& state);
   void placePeople(int numberOfPeople, State const&state = State::Susceptible); //places randomly nPeople on the board
   void draw(int cellSize = 10, std::string windowTitle = "Plague simulator"); //draw board with SFML
+  void move();
   void evolve(Disease &disease, bool quarantine = true);
   void save(std::string fileName = "output.txt");
 };
