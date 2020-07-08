@@ -26,8 +26,8 @@ class Board {
     int recovered;
     int quarantined;
   };
-  std::vector<Situation> history_;
   
+  std::vector<Situation> history_;
   int peopleInQuarantine_;
   
   int countInfectedNeighbours(int i);
