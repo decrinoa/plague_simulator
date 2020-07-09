@@ -7,6 +7,7 @@
 #include <fstream>
 
 
+//Funzioni non usate
 /*int Board::countInfectedNeighbours(int i) {
   assert(board_[i] == State::Susceptible);
   
@@ -34,8 +35,8 @@
   if (i / n_ != n_ - 1 && board_[i + n_] == State::Infected) ++ count;
   
   return count;
-}
-*/
+}*/
+
 /*int Board::countNearerThanRadius(int position, double radius) {
   assert(board_[position] == State::Susceptible);
 
@@ -50,27 +51,25 @@
   }
 
   return count;
-}
-*/
-void Board::change(int i) { 
-  //change State of cell from E->S, S->I, I->R
-  
+}*/
+
+void Board::change(int i) {  
   switch(board_[i]) {
     case State::Empty :
-      board_[i] == State::Susceptible;
+      board_[i] = State::Susceptible;
       break;
     case State::Susceptible :
-      board_[i] == State::Infected;
+      board_[i] = State::Infected;
       break;
     case State::Infected :
-      board_[i] == State::Recovered;
+      board_[i] = State::Recovered;
       break;
     default: 
       std::cout << "Error in change(int i) funcion: board_[" << i << "] is Recovered or an unknown State\n";
   }
 }
 
-//PUBLIC
+//  -PUBLIC-
 State& Board::state(int i) {
   assert(i >= 0 && i <= board_.size());
   return board_[i];
@@ -80,6 +79,7 @@ void Board::setInfected(int row, int col) {
   assert (row < n_ && col < n_);
   board_[row * n_ + col] = State::Infected;
 }
+
 
 int Board::count(State const& state) {
   int count = 0;
@@ -112,9 +112,8 @@ void Board::placePeople(int numberOfPeople, State const&state) {
   }
 }
 
-//------------------------------------------------------------------------
 void Board::evolve(Disease &disease, bool quarantine) {
-  assert(disease.beta > 0 && disease.beta < 1);
+  assert(disease.beta > 0 && disease.beta <= 1);
   assert(disease.gamma  >= 0 && disease.gamma <= 1 );
   assert(disease.radius >= 1);
   assert(disease.manifestation >= 0 && disease.manifestation <= 1);
@@ -123,12 +122,12 @@ void Board::evolve(Disease &disease, bool quarantine) {
   std::uniform_real_distribution<double> dist(0.0,1.0);
 
   std::vector<int> toChange;
-  //qui bisogna mettere il legame con la funzione quarantine che è da definire//
+  //qui bisogna mettere il legame con la funzione quarantine che è da definire//  //DP: Che?
    
   if (quarantine) { //RETURN FROM QUARANTINE
     int recoveredFromQuarantine = 0;
     for (int i = 0; i < peopleInQuarantine_; ++i) {
-      if (dist(gen) < disease.gamma) {      
+      if (dist(gen) < disease.gamma) { //cioè con probabilità = gamma
         placePeople(1, State::Recovered);  //place 1 person on the grid
         ++recoveredFromQuarantine;
       }
@@ -137,7 +136,7 @@ void Board::evolve(Disease &disease, bool quarantine) {
   }
   
   for (int i = 0, end = board_.size(); i < end; ++i) {
-    if (board_[i] == State::Susceptible) {
+    if (board_[i] == State::Susceptible) {  //INFECTION OF SUSCEPTIBLE
       
       for (int j = 0, endJ = board_.size(); j < endJ; ++j) {
         if (board_[j] == State::Infected) {
@@ -145,25 +144,26 @@ void Board::evolve(Disease &disease, bool quarantine) {
           if(distance(i,j) <= disease.radius) {
             if (dist(gen) < disease.beta) { 
               toChange.push_back(i);
-              break;    
+              break;    //break è importante. Altrimenti lo i può venire aggiunto più volte a toChange e diventerà subito recovered
             }
           }
-          else{    //if (distance > radius)
-            // Se la colonna dell'infetto è maggiore del suscettibile che sto controllando (i), e sono tra loro   
-            // troppo lontani, saranno troppo lontani anche tutti i prossimi infettti su tutta la linea. 
-            // Aumento quindi j di quelli rimanenti nella riga, passo cioè alla riga dopo
-            
-            //questa non l'ho capita :/ me la dovete spiegare (MF)
-            if (j%n_ > i%n_)
-              j += n_ - (j%n_);
-          }
+
+          // Se la colonna dell'infetto è maggiore del suscettibile che sto controllando (i) (cioè se l'infetto è più a destra del 
+          // suscettibile che sto controllando), e sono tra loro troppo lontani (else = distance > radius), saranno troppo lontani 
+          // rispetto al suscettibile che sto controllando anche tutti i prossimi infetti su tutta la linea.
+          // Aumento quindi j del numero di persone rimanenti nella riga (n - colonna di j) e passo così alla riga dopo
+          // Attenzione: è importante che la condizione nel for sia j < endJ e non j != endJ. Infatti in questo modo j può 
+          // diventare anche maggiore di endJ            
+          else if (j%n_ > i%n_)
+            j += n_ - (j%n_);
         }  
       }
     }
-        if (board_[i] == State::Infected) {   //RECOVER OF INFECTED
+    
+    if (board_[i] == State::Infected) {   //RECOVERY OF INFECTED
       if (dist(gen) < disease.gamma) //cioè con probabilità = gamma
         toChange.push_back(i);
-      if (quarantine && dist(gen) < disease.manifestation) {  //questo aggiunge alla quarantena ma la quarantena la dobbiamo sistemare (dico a te MG)
+      if (quarantine && dist(gen) < disease.manifestation) {  //QUARANTINE OF INFECTED
         board_[i] = State::Empty;
         ++peopleInQuarantine_;
       }
@@ -174,9 +174,8 @@ void Board::evolve(Disease &disease, bool quarantine) {
     change(v);
 
   //UPDATE HISTORY
-  history_.push_back({count(State::Susceptible), count(State::Infected), count(State::Recovered), peopleInQuarantine_});  //legame con history
+  history_.push_back({count(State::Susceptible), count(State::Infected), count(State::Recovered), peopleInQuarantine_});  //legame con history  //DP: Che?
 }
-//----------------------------------------------------
 
 void Board::move() {
   
@@ -252,6 +251,30 @@ void Board::move() {
   }
 }
 
+void Board::print() {
+  for (int i = 0, end = board_.size(); i < end; ++i) {
+    if (i != 0 && i % n_ == 0) std::cout << '\n';
+    
+    switch(board_[i]) {
+      case State::Empty :
+        std::cout << ' ';
+        break;
+      case State::Susceptible :
+        std::cout << 'O';
+        break;
+      case State::Infected :
+        std::cout << 'X';
+        break;
+      case State::Recovered :
+        std::cout << '.';
+        break;
+      default:
+        std::cout << "Strange error in print() funcion: board_[" << i << "] is an unknown State\n";
+    }
+    std::cout << ' ';
+  }
+  std::cout << "\n\n";
+}
 
 void Board::draw(int cellSize, std::string windowTitle) {
   if (displayCreated_ == false) {
@@ -290,7 +313,6 @@ void Board::draw(int cellSize, std::string windowTitle) {
   window_.display();
 }
 
-//stampa su doc dati per grafici 
 void Board::save(std::string fileName) {
   std::ofstream out(fileName);
   auto end = history_.end();
@@ -299,29 +321,4 @@ void Board::save(std::string fileName) {
     out << it - begin << '\t' << it->susceptible << '\t' << it->infected << '\t' << it->recovered << '\t' << it->quarantined << '\n';
   }
   out.close();
-}
-
-void Board::print() {
-  for (int i = 0, end = board_.size(); i < end; ++i) {
-    if (i != 0 && i % n_ == 0) std::cout << '\n';
-    
-    switch(board_[i]) {
-      case State::Empty :
-        std::cout << ' ';
-        break;
-      case State::Susceptible :
-        std::cout << 'O';
-        break;
-      case State::Infected :
-        std::cout << 'X';
-        break;
-      case State::Recovered :
-        std::cout << '.';
-        break;
-      default:
-        std::cout << "Strange error in print() funcion: board_[" << i << "] is an unknown State\n";
-    }
-    std::cout << ' ';
-  }
-  std::cout << "\n\n";
 }
