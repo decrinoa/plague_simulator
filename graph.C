@@ -1,18 +1,18 @@
 void graph () {
    
-  TCanvas *plague = new TCanvas("plague", "Epidemiologic Graph");
+  TCanvas *plague = new TCanvas("plague", "Epidemic curve");
 
-  TGraph * I = new TGraph("data.txt", "%lg %*lg %lg %*lg %*lg");
+  TGraph * I = new TGraph("data.dat", "%lg %*lg %lg %*lg %*lg");
   
-  TGraph * S = new TGraph("data.txt", "%lg %lg %*lg %*lg %*lg");
+  TGraph * S = new TGraph("data.dat", "%lg %lg %*lg %*lg %*lg");
 
-  TGraph * R = new TGraph("data.txt", "%lg %*lg %*lg %lg %*lg");
+  TGraph * R = new TGraph("data.dat", "%lg %*lg %*lg %lg %*lg");
 
-  TGraph * Q = new TGraph("data.txt", "%lg %*lg %*lg %*lg %lg");
+  TGraph * Q = new TGraph("data.dat", "%lg %*lg %*lg %*lg %lg");
 
 
      TMultiGraph *mg = new TMultiGraph();
-   mg->SetTitle("Epidemiologic Graph");
+   mg->SetTitle("Epidemic curve");
   
   I->SetLineColor(2);
   I->SetLineWidth(4);
@@ -39,5 +39,6 @@ void graph () {
   leg->AddEntry(R,"Recovered");
   leg->AddEntry(Q,"People in quarantine");
   leg->Draw("Same");
-
+   
+  plague->Print("Epidemic_curve.gif"); 
  }
