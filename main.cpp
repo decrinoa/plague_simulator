@@ -10,8 +10,6 @@ int main() {
   griglia.placePeople(699);
   griglia.placePeople(10,State::Infected);
 
-  
-
   int frame = 0; 
     while (griglia.count(State::Infected) > 0 || griglia.peopleInQuarantine() > 0) {
       std::cout << "S: " << griglia.count(State::Susceptible) << " - I: " << griglia.count(State::Infected) << 
@@ -33,7 +31,7 @@ int main() {
 
       ++frame;
     }
-  
+  //griglia.print();
   griglia.draw();
 
   std::cout << "Press RETURN to close this window\n";
