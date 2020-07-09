@@ -46,11 +46,13 @@ public:
   inline int peopleInQuarantine() { return peopleInQuarantine_;};
   
   int count(State const& state);
+  inline int countPeople() { return n_*n_ - count(State::Empty); };
   void placePeople(int numberOfPeople, State const&state = State::Susceptible); //places randomly nPeople on the board
   void evolve(Disease &disease, bool quarantine = true);
   void move();
   void print();
-  void draw(int cellSize = 10, std::string windowTitle = "Plague simulator"); //draw board with SFML
+  //draw board with SFML. Offset è da intendere come espresso numero di celle, non in pixel
+  void draw(int cellSize = -1, int offset = 3, std::string windowTitle = "Plague simulator");
   void save(std::string fileName = "output.dat"); //stampa su doc dati per grafici 
 };
 
