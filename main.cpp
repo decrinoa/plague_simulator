@@ -29,7 +29,7 @@ int main() {
       system("clear");
 
       griglia.evolve(tetano);
-      //griglia.move();
+      griglia.move();
 
       ++frame;
     }
