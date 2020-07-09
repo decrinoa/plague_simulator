@@ -276,15 +276,28 @@ void Board::print() {
   std::cout << "\n\n";
 }
 
-void Board::draw(int cellSize, std::string windowTitle) {
+void Board::draw(int cellSize, int offset, std::string windowTitle) {
+  //se non viene passato il parametro cellSize, la dimensione delle celle è quella massima che fa entrare la griglia nello schermo
+  if (cellSize == -1)
+    cellSize = (sf::VideoMode::getDesktopMode().height - 60) / (n_ + 2*offset); //tolti 60 pixel per la barra delle applicazioni
+  
+  int sqrtPeople = sqrt(countPeople());
+
   if (displayCreated_ == false) {
     //create display
-    window_.create(sf::VideoMode(n_*cellSize, n_*cellSize), windowTitle, sf::Style::Close);
+    window_.create(sf::VideoMode((n_ + 2*sqrtPeople + 4*offset)*cellSize, (n_ + 2*offset)*cellSize), windowTitle, sf::Style::Close);
     displayCreated_ = true;
   }
 
   //update display
   window_.clear(sf::Color::Black);
+
+  sf::RectangleShape border(sf::Vector2f(n_*cellSize, n_*cellSize));
+  border.setFillColor(sf::Color::Transparent);
+  border.setOutlineColor(sf::Color::White);
+  border.setOutlineThickness(cellSize/2);
+  border.setPosition(offset*cellSize, offset*cellSize);
+  window_.draw(border);
 
   sf::CircleShape circle(cellSize/2); //radius = cellSize/2
   circle.setOutlineThickness(0);
@@ -293,21 +306,36 @@ void Board::draw(int cellSize, std::string windowTitle) {
   for (int i = 0, end = board_.size(); i < end; ++i) {
     if (board_[i] == State::Susceptible) {
       circle.setFillColor(sf::Color::White);
-      circle.setPosition((i % n_) * cellSize, (i / n_) * cellSize);   //col = (i%n), row = (i/n)
+      circle.setPosition((i % n_ +offset) * cellSize, (i / n_ +offset) * cellSize);   //col = (i%n), row = (i/n)
       window_.draw(circle);
     }
 
     if (board_[i] == State::Infected) {
       circle.setFillColor(sf::Color::Red);
-      circle.setPosition((i % n_) * cellSize, (i / n_) * cellSize);   //col = (i%n), row = (i/n)
+      circle.setPosition((i % n_ +offset) * cellSize, (i / n_ +offset) * cellSize);   //col = (i%n), row = (i/n)
       window_.draw(circle);
     }
 
     if (board_[i] == State::Recovered) {
       circle.setFillColor(sf::Color::Blue);
-      circle.setPosition((i % n_) * cellSize, (i / n_) * cellSize);   //col = (i%n), row = (i/n)
+      circle.setPosition((i % n_ +offset) * cellSize, (i / n_ +offset) * cellSize);   //col = (i%n), row = (i/n)
       window_.draw(circle);
     }
+  }
+
+  //draw quarantine
+  border.setSize(sf::Vector2f(2*sqrtPeople*cellSize, 2*sqrtPeople*cellSize));
+  border.setPosition((3*offset + n_)*cellSize, offset*cellSize);
+  window_.draw(border);
+  
+  circle.setFillColor(sf::Color::Red);
+  circle.setPosition((3*offset + n_)*cellSize + cellSize/2, offset*cellSize + cellSize/2);
+  for (int i = 0; i < peopleInQuarantine_; ++i) {    
+    window_.draw(circle);         //disegna il cerchio
+    if ((i+1) % sqrtPeople == 0)
+      circle.move((sqrtPeople-1)*-2, 2*cellSize);   //muove il cerchio indietro (all'inizio) e sotto di 2 celle
+    else
+      circle.move(2*cellSize, 0);   //e lo muove di 2 celle
   }
   
   window_.display();
