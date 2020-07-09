@@ -338,6 +338,37 @@ void Board::draw(int cellSize, int offset, std::string windowTitle) {
       circle.move(2*cellSize, 0);   //e lo muove di 2 celle
   }
   
+  //draw text
+  sf::Font font;
+  if (!font.loadFromFile("stencil.ttf")) //se il caricamento fallisce 
+    font.loadFromFile("roman.ttf");
+  
+  int fontSize = sqrtPeople*cellSize/4;
+  
+  sf::Text text("Quarantine", font, fontSize);
+  text.setPosition((3*offset + n_)*cellSize, (offset + 2*sqrtPeople)*cellSize);
+  window_.draw(text);
+
+  //text.setFillColor(sf::Color::White);
+  text.setString("S: " + std::to_string(count(State::Susceptible)));
+  text.move(0,4*offset*cellSize + fontSize);
+  window_.draw(text);
+
+  text.setFillColor(sf::Color::Red);
+  text.setString("I: " + std::to_string(count(State::Infected)));
+  text.move(0,2*offset*cellSize + fontSize);
+  window_.draw(text);
+
+  text.setFillColor(sf::Color::Blue);
+  text.setString("R: " + std::to_string(count(State::Recovered)));
+  text.move(0,2*offset*cellSize + fontSize);
+  window_.draw(text);
+
+  text.setFillColor(sf::Color::Red);
+  text.setString("Q: " + std::to_string(peopleInQuarantine_));
+  text.move(0,2*offset*cellSize + fontSize);
+  window_.draw(text);
+
   window_.display();
 }
 
