@@ -4,15 +4,16 @@
 #include <vector>
 #include <cassert>
 #include <SFML/Graphics.hpp>
+#include <cmath> //per sqrt
 
 struct Disease {
   double const& beta;   //probability of infection being nearer than radius to an infected person
   double const& gamma;  //probability of recovery
   double const& radius = 1.41421356237; //sqrt(2)
-  double const& manifestation;
+  double const& manifestation = 0.5;
 };
 
-enum class State : char { Empty, Susceptible, Infected, Recovered}; //In un futuro aggiungere anche Dead
+enum class State{ Empty, Susceptible, Infected, Recovered}; //In un futuro aggiungere anche Dead
 
 class Board {
   struct Situation {
@@ -29,9 +30,13 @@ class Board {
   std::vector<Situation> history_;
   int peopleInQuarantine_;
   
- // int countInfectedNeighbours(int i);
- // int countNearerThanRadius(int position, double radius);
+  //int countInfectedNeighbours(int i);
+  //int countNearerThanRadius(int position, double radius);
+
+  //cambia lo state della cella i: E->S S->I, I->R
   void change(int i);
+  inline double distance(int i, int j) {     //get distance between two cells
+    return sqrt((i%n_ - j%n_)*(i%n_ - j%n_) + (i/n_ - j/n_)*(i/n_ - j/n_)); }
   
 public:
   inline Board(int n) : board_(n*n), n_{n}, displayCreated_{false} { assert(n > 0); };
@@ -42,11 +47,11 @@ public:
   
   int count(State const& state);
   void placePeople(int numberOfPeople, State const&state = State::Susceptible); //places randomly nPeople on the board
-  void draw(int cellSize = 10, std::string windowTitle = "Plague simulator"); //draw board with SFML
+  void evolve(Disease &disease, bool quarantine = true);
   void move();
   void print();
-  void evolve(Disease &disease, bool quarantine = true);
-  void save(std::string fileName = "output.txt");
+  void draw(int cellSize = 10, std::string windowTitle = "Plague simulator"); //draw board with SFML
+  void save(std::string fileName = "output.dat"); //stampa su doc dati per grafici 
 };
 
 #endif  //BOARD_H
