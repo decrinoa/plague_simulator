@@ -1,20 +1,44 @@
 #include <iostream>
+#include <chrono>
+#include <thread>
 #include "board.h"
 
 int main() {
-  Board griglia(240);
-  Disease tetano{0.5,0.001,3, 0.2};
+  Board griglia(200);
+  Disease tetano{0.5, 0.01, 3, 0.01};
 
-  griglia.placePeople(1000);
+  griglia.placePeople(699);
   griglia.placePeople(1,State::Infected);
 
-  //ANIMATION
   
-  griglia.draw(5);
+
+  int frame = 0; 
+    while (griglia.count(State::Infected) > 0) {
+      std::cout << "S: " << griglia.count(State::Susceptible) << " - I: " << griglia.count(State::Infected) << 
+        " - R: " << griglia.count(State::Recovered) << " - Q: " << griglia.peopleInQuarantine() << "\n\n";
+    
+      //griglia.print();
+      griglia.draw();
+
+      std::cout << "Frame " << frame << '\n';
+      
+      using namespace std::chrono_literals;
+      std::this_thread::sleep_for(10ms);
+      //std::cout << "Press RETURN to continue\n";
+      //std::cin.ignore();
+      system("clear");
+
+      griglia.evolve(tetano);
+      //griglia.move();
+
+      ++frame;
+    }
+  
+  griglia.draw();
 
   std::cout << "Press RETURN to close this window\n";
   std::cin.ignore();
   
-  griglia.save("data.txt");
+  griglia.save("data.dat");
   std::cout << "Data saved.\n";
 }
