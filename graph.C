@@ -12,7 +12,7 @@ void graph () {
 
 
      TMultiGraph *mg = new TMultiGraph();
-   mg->SetTitle("Epidemic curve");
+   mg->SetTitle("Epidemic curve;Time;People");
   
   I->SetLineColor(2);
   I->SetLineWidth(4);
