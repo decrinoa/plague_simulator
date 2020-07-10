@@ -42,7 +42,7 @@ int main() {
 
   //FINE ESEMPIO. E' del tutto equivalente a chiamare la funzione animate
   
-  griglia.animate(tetano);
+  griglia.animate(tetano,0);
   
   griglia.save("data.dat");
   
