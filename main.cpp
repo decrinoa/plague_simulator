@@ -39,10 +39,10 @@ int main() {
   griglia.draw();
   std::cout << "END OF SIMULATION: Press return to close the window \n";
   std::cin.ignore();    */
-  
+
   //FINE ESEMPIO. E' del tutto equivalente a chiamare la funzione animate
   
-  griglia.animate(tetano);
+  griglia.animate(tetano,1,true);
   
   griglia.save("data.dat");
   
