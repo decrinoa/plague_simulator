@@ -432,7 +432,7 @@ void Board::animate(Disease const& disease, int infectedBeforeQuarantine, bool m
   std::cin.ignore();
 }
 
-void Board::save(std::string fileName) {
+void Board::save(std::string const& fileName) {
   std::ofstream out(fileName);
   auto end = history_.end();
   auto begin = history_.begin();
