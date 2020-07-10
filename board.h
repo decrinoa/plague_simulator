@@ -38,20 +38,21 @@ class Board {
   inline double distance(int i, int j) {     //get distance between two cells
     return sqrt((i%n_ - j%n_)*(i%n_ - j%n_) + (i/n_ - j/n_)*(i/n_ - j/n_)); }
   
+  void placePeople(int numberOfPeople, State const&state, bool returnFromQuarantine);
+  
 public:
   inline Board(int n) : board_(n*n), n_{n}, displayCreated_{false} { assert(n > 0); };
+  inline ~Board() { window_.~RenderWindow(); };
   
-  State& state(unsigned int i);  //get board[i]
-  void setInfected(int row, int col);  //place an infected person on the board
-  inline int peopleInQuarantine() { return peopleInQuarantine_;};
-  
-  //Conta il numero di individui allo stato state
-  int count(State const& state);
-  inline int countPeople() { return n_*n_ - count(State::Empty); };
-  void placePeople(int numberOfPeople, State const&state = State::Susceptible); //places randomly nPeople on the board
-  void evolve(Disease const& disease, bool quarantine = true);
-  void move();
-  void print();
+  State& state(unsigned int i);                                                         //get board[i]
+  void setInfected(int row, int col);                                                   //place an infected person on the board
+  inline int peopleInQuarantine() { return peopleInQuarantine_;};                       
+  int count(State const& state);                                                        //Conta il numero di individui allo stato state
+  inline int countPeople() { return n_*n_ - count(State::Empty) + peopleInQuarantine_; };
+  void placePeople(int numberOfPeople, State const&state = State::Susceptible);         //places randomly nPeople on the board
+  void evolve(Disease const& disease, bool quarantine = true);                          //evolve la griglia di un frame
+  void move();                                                                          //muove le persone
+  void print();                                                                         //stampa su schermo la griglia con caratteri 
   
   //draw board with SFML. Offset è da intendere come espresso numero di celle, non in pixel
   //Use cellSize = -1 (default) to draw with the maximum size
