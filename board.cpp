@@ -5,7 +5,8 @@
 #include <algorithm>  //for shuffle
 #include <cmath>
 #include <fstream>
-
+#include <chrono>
+#include <thread>
 
 //Funzioni non usate
 /*int Board::countInfectedNeighbours(int i) {
@@ -105,14 +106,14 @@ void Board::placePeople(int numberOfPeople, State const&state) {
     if (board_[i] == State::Empty)
       emptyCells.push_back(i);
   }
-
   shuffle (emptyCells.begin(), emptyCells.end(), gen);
+
   for (int i = 0; i < numberOfPeople; ++i) {
     board_[emptyCells[i]] = state;
   }
 }
 
-void Board::evolve(Disease &disease, bool quarantine) {
+void Board::evolve(Disease const& disease, bool quarantine) {
   assert(disease.beta > 0 && disease.beta <= 1);
   assert(disease.gamma  >= 0 && disease.gamma <= 1 );
   assert(disease.radius >= 1);
@@ -276,7 +277,9 @@ void Board::print() {
   std::cout << "\n\n";
 }
 
-void Board::draw(int cellSize, int offset, std::string windowTitle) {
+void Board::draw(int cellSize, int offset, std::string  const& windowTitle) {
+  assert((cellSize > 0 || cellSize == -1) && offset >= 0);
+
   //se non viene passato il parametro cellSize, la dimensione delle celle è quella massima che fa entrare la griglia nello schermo
   if (cellSize == -1)
     cellSize = (sf::VideoMode::getDesktopMode().height - 60) / (n_ + 2*offset); //tolti 60 pixel per la barra delle applicazioni
@@ -333,7 +336,7 @@ void Board::draw(int cellSize, int offset, std::string windowTitle) {
   for (int i = 0; i < peopleInQuarantine_; ++i) {    
     window_.draw(circle);         //disegna il cerchio
     if ((i+1) % sqrtPeople == 0)
-      circle.move((sqrtPeople-1)*-2, 2*cellSize);   //muove il cerchio indietro (all'inizio) e sotto di 2 celle
+      circle.move((sqrtPeople-1)*-2*cellSize, 2*cellSize);   //muove il cerchio indietro (all'inizio) e sotto di 2 celle
     else
       circle.move(2*cellSize, 0);   //e lo muove di 2 celle
   }
@@ -372,6 +375,63 @@ void Board::draw(int cellSize, int offset, std::string windowTitle) {
   window_.display();
 }
 
+void Board::animate(Disease const& disease, int infectedBeforeQuarantine, bool move, bool frameByFrame, int cellSize, int offset, std::string const& windowTitle) {
+  //assert solo di animate
+  assert(infectedBeforeQuarantine >= 0);
+  
+  // Non so quanto ci sia bisogno di questi asserts, visto che ci sono già dopo. Credo sia un controllo superfluo che rallenta un po'
+  /*
+  //asserts di draw()
+  assert((cellSize > 0 || cellSize == -1) && offset >= 0);
+
+  //asserts di evolve
+  assert(disease.beta > 0 && disease.beta <= 1);
+  assert(disease.gamma  >= 0 && disease.gamma <= 1 );
+  assert(disease.radius >= 1);
+  assert(disease.manifestation >= 0 && disease.manifestation <= 1);
+  */
+  
+  int frame = 0;
+
+  while (count(State::Infected) > 0 /*|| peopleInQuarantine() > 0 */ ) {
+    std::cout << "S: " << count(State::Susceptible) << " - I: " << count(State::Infected) << 
+                " - R: " << count(State::Recovered) << " - Q: " << peopleInQuarantine_ << "\n\n";
+    
+    draw(cellSize, offset, windowTitle);
+
+    std::cout << "Frame " << frame << '\n';
+      
+    if (frameByFrame) {
+      std::cout << "Press RETURN to continue\n";
+      std::cin.ignore();
+    }
+    else {
+      using namespace std::chrono_literals;
+      std::this_thread::sleep_for(10ms);
+    }
+
+    system("clear");
+
+    bool quarantine = false;
+    if (infectedBeforeQuarantine != 0)
+      quarantine = count(State::Infected) > infectedBeforeQuarantine;
+
+    evolve(disease, quarantine);
+    if (move) {
+      //la variabile ha lo stesso nome della funzione. Per specificare che uso la funzione devo anche scrivere Board::
+      Board::move();  
+    }
+
+    ++frame;
+  }
+
+  draw();
+
+  std::cout << "Simulation ended.\n";
+  std::cout << "Press RETURN to close this window\n";
+  std::cin.ignore();
+}
+
 void Board::save(std::string fileName) {
   std::ofstream out(fileName);
   auto end = history_.end();
@@ -380,4 +440,6 @@ void Board::save(std::string fileName) {
     out << it - begin << '\t' << it->susceptible << '\t' << it->infected << '\t' << it->recovered << '\t' << it->quarantined << '\n';
   }
   out.close();
+  
+  std::cout << "Data saved.\n";
 }
