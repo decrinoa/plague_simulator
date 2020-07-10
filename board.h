@@ -52,7 +52,7 @@ public:
   void move();
   void print();
   //draw board with SFML. Offset è da intendere come espresso numero di celle, non in pixel
-  void draw(int cellSize = -1, int offset = 3, std::string windowTitle = "Plague simulator");
+  void draw(int cellSize = -1, int offset = 2, std::string windowTitle = "Plague simulator");
   void save(std::string fileName = "output.dat"); //stampa su doc dati per grafici 
 };
 
