@@ -26,7 +26,6 @@ class Board {
   std::vector<State> board_;
   int n_;
   sf::RenderWindow window_;
-  bool displayCreated_;
   std::vector<Situation> history_;
   int peopleInQuarantine_;
   
@@ -42,7 +41,7 @@ class Board {
   void placePeople(int numberOfPeople, State const&state, bool returnFromQuarantine);
   
 public:
-  inline Board(int n) : board_(n*n), n_{n}, displayCreated_{false}, peopleInQuarantine_{0} { assert(n > 0); };
+  inline Board(int n) : board_(n*n), n_{n}, peopleInQuarantine_{0} { assert(n > 0); };
   inline ~Board() { window_.~RenderWindow(); };
   
   State& state(unsigned int i);                                                         //get board[i]
