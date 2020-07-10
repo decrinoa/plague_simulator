@@ -70,6 +70,39 @@ void Board::change(int i) {
   }
 }
 
+void Board::placePeople(int numberOfPeople, State const&state, bool returnFromQuarantine) {
+  //Actually there's no need for assert >= 0: putting a value < 0 does not break the program
+  assert(numberOfPeople >= 0);
+  
+  //the number of people to put in the grid must be less (or equal) to the number of empty cells
+  assert(numberOfPeople <= count(State::Empty));
+
+  //Se un utente cambia il numero di persone nella griglia dopo averla visualizzata almeno una volta, cambierà anche la 
+  //grandezza del quadrato della quarantena che dipende appunto da countPeople().
+  //Non cambia però la grandezza della window, che deve quindi essere distrutta e ricreata quando viene richiamato draw.
+  //Per capire se placePeople è stato chiamato da evolve (quando una persona guarita ritorna dalla quarantena) o se invece
+  //è stato chiamato dall'utente, si è resa pubblica (quindi disponibile all'utente) solo la funzione senza bool.
+  //Evolve invece chiamerà la funzione privata con il booleano = true.
+  if (!returnFromQuarantine && displayCreated_) {
+    window_.close();
+    displayCreated_ = false;
+  }
+  
+  std::random_device gen;
+  
+  //It will contain the position of all empty cells
+  std::vector<int> emptyCells;
+  for (int i = 0, end = board_.size(); i < end; ++i) {
+    if (board_[i] == State::Empty)
+      emptyCells.push_back(i);
+  }
+  shuffle (emptyCells.begin(), emptyCells.end(), gen);
+
+  for (int i = 0; i < numberOfPeople; ++i) {
+    board_[emptyCells[i]] = state;
+  }
+}
+
 //  -PUBLIC-
 State& Board::state(unsigned int i) {
   assert(i <= board_.size());
@@ -91,26 +124,10 @@ int Board::count(State const& state) {
   return count;
 }
 
-void Board::placePeople(int numberOfPeople, State const&state) {
-  //Actually there's no need for assert >= 0: putting a value < 0 does not break the program
-  assert(numberOfPeople >= 0);
-  
-  //the number of people to put in the grid must be less (or equal) to the number of empty cells
-  assert(numberOfPeople <= count(State::Empty));     
-  
-  std::random_device gen;
-  
-  //It will contain the position of all empty cells
-  std::vector<int> emptyCells;
-  for (int i = 0, end = board_.size(); i < end; ++i) {
-    if (board_[i] == State::Empty)
-      emptyCells.push_back(i);
-  }
-  shuffle (emptyCells.begin(), emptyCells.end(), gen);
-
-  for (int i = 0; i < numberOfPeople; ++i) {
-    board_[emptyCells[i]] = state;
-  }
+void Board::placePeople(int numberOfPeople, State const& state) {
+  //La placePeople pubblica (quindi disponibile all'utente) non fa altro che chiamare quella privata passando il 
+  //parametro returnFromQuarantine = false. Si veda il commento della placePeople privata per un chiarimento
+  placePeople(numberOfPeople, state, false);
 }
 
 void Board::evolve(Disease const& disease, bool quarantine) {
@@ -129,7 +146,7 @@ void Board::evolve(Disease const& disease, bool quarantine) {
     int recoveredFromQuarantine = 0;
     for (int i = 0; i < peopleInQuarantine_; ++i) {
       if (dist(gen) < disease.gamma) { //cioè con probabilità = gamma
-        placePeople(1, State::Recovered);  //place 1 person on the grid
+        placePeople(1, State::Recovered, true);  //place 1 person on the grid
         ++recoveredFromQuarantine;
       }
     }
@@ -286,7 +303,7 @@ void Board::draw(int cellSize, int offset, std::string  const& windowTitle) {
   
   int sqrtPeople = sqrt(countPeople());
 
-  if (displayCreated_ == false) {
+  if (!displayCreated_) {
     //create display
     window_.create(sf::VideoMode((n_ + 2*sqrtPeople + 4*offset)*cellSize, (n_ + 2*offset)*cellSize), windowTitle, sf::Style::Close);
     displayCreated_ = true;
@@ -430,6 +447,9 @@ void Board::animate(Disease const& disease, int infectedBeforeQuarantine, bool m
   std::cout << "Simulation ended.\n";
   std::cout << "Press RETURN to close the window\n";
   std::cin.ignore();
+
+  window_.close();
+  displayCreated_ = false;  
 }
 
 void Board::save(std::string const& fileName) {
