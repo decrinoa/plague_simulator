@@ -28,7 +28,7 @@ class Board {
   sf::RenderWindow window_;
   std::vector<Situation> history_;
   int peopleInQuarantine_;
-
+  
   //cambia lo state della cella i: E->S, S->I, I->R
   void change(int i);
   inline double distance(int i, int j) {     //get distance between two cells
