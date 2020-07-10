@@ -41,7 +41,7 @@ class Board {
 public:
   inline Board(int n) : board_(n*n), n_{n}, displayCreated_{false} { assert(n > 0); };
   
-  State& state(int i);  //get board[i]
+  State& state(unsigned int i);  //get board[i]
   void setInfected(int row, int col);  //place an infected person on the board
   inline int peopleInQuarantine() { return peopleInQuarantine_;};
   
