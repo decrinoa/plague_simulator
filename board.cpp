@@ -428,7 +428,7 @@ void Board::animate(Disease const& disease, int infectedBeforeQuarantine, bool m
   draw();
 
   std::cout << "Simulation ended.\n";
-  std::cout << "Press RETURN to close this window\n";
+  std::cout << "Press RETURN to close the window\n";
   std::cin.ignore();
 }
 
