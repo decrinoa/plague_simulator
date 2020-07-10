@@ -83,8 +83,10 @@ void Board::placePeople(int numberOfPeople, State const&state, bool returnFromQu
   //Per capire se placePeople è stato chiamato da evolve (quando una persona guarita ritorna dalla quarantena) o se invece
   //è stato chiamato dall'utente, si è resa pubblica (quindi disponibile all'utente) solo la funzione senza bool.
   //Evolve invece chiamerà la funzione privata con il booleano = true.
-  if (!returnFromQuarantine && window_.isOpen())
+  if (!returnFromQuarantine && displayCreated_) {
     window_.close();
+    displayCreated_ = false;
+  }
   
   std::random_device gen;
   
@@ -194,6 +196,7 @@ void Board::evolve(Disease const& disease, bool quarantine) {
 }
 
 void Board::move() {
+  assert(countPeople() > 0);
   
   //equal probability of going to the left (cell i-1), up (i-n), right (i+1), down (i+n) or stay
   std::random_device gen;
@@ -204,8 +207,8 @@ void Board::move() {
   int end = board_.size();
   int increment = 1;
   if (gen() % 2) { //gen() is a (big) random int number
-    begin = end;
-    end = 0;
+    begin = end-1;
+    end = -1;
     increment = -1;
   }
 
@@ -302,9 +305,10 @@ void Board::draw(int cellSize, int offset, int frame, std::string const& windowT
   unsigned int windowWidth = (n_ + 2*sqrtPeople + 4*offset)*cellSize;
   unsigned int windowHeight = (n_ + 2*offset)*cellSize;
   
-  if (!window_.isOpen()) {
+  if (!displayCreated_) {
     //create display    
     window_.create(sf::VideoMode( windowWidth, windowHeight), windowTitle, sf::Style::Close);
+    displayCreated_ = true;
   }
 
   //update display
@@ -456,13 +460,14 @@ void Board::animate(Disease const& disease, int infectedBeforeQuarantine, bool f
   std::cin.ignore();
 
   window_.close();
+  displayCreated_ = false;  
 }
 
 void Board::save(std::string const& fileName) {
   std::ofstream out(fileName);
   auto end = history_.end();
   auto begin = history_.begin();
-  for (auto it = history_.begin(); it != end; ++it) {
+  for (auto it = begin; it != end; ++it) {
     out << it - begin << '\t' << it->susceptible << '\t' << it->infected << '\t' << it->recovered << '\t' << it->quarantined << '\n';
   }
   out.close();
