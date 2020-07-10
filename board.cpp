@@ -202,7 +202,6 @@ void Board::move() {
   std::uniform_int_distribution<int> dist(0, 5); //5 possibility
 
   //It's better to start once from begin and once from end, otherwise there'll be a tendency to go to the top right corner
-  //Try to comment these lines and run a 40x40 board with 300 people if you don't believe this
   int begin = 0;
   int end = board_.size();
   int increment = 1;
@@ -217,10 +216,10 @@ void Board::move() {
          
       int direction = dist(gen);
 
-      //These checkings is similar to countInfectedNeighbours (so I'll put no comments)
       switch (direction) {
         case 0: //left
-          //Warning: Do not swap these checkings. If you access board_[i-1] before cheking if i % n_ != 0, 
+          //check if left is empty only if i it's not in the first column
+          ///WARNING: Do not swap these checkings. If you access board_[i-1] before cheking if i % n_ != 0, 
           //board[i-1] could not exist -> Undefined behavior
           if (i % n_ != 0 && board_[i-1] == State::Empty) {  
             board_[i-1] = board_[i];  //the new cell take the old state
@@ -294,7 +293,7 @@ void Board::print() {
   std::cout << "\n\n";
 }
 
-void Board::draw(int cellSize, int offset, std::string  const& windowTitle) {
+void Board::draw(int cellSize, int offset, int frame, std::string const& windowTitle) {
   assert((cellSize > 0 || cellSize == -1) && offset >= 0);
 
   //se non viene passato il parametro cellSize, la dimensione delle celle è quella massima che fa entrare la griglia nello schermo
@@ -302,10 +301,12 @@ void Board::draw(int cellSize, int offset, std::string  const& windowTitle) {
     cellSize = (sf::VideoMode::getDesktopMode().height - 60) / (n_ + 2*offset); //tolti 60 pixel per la barra delle applicazioni
   
   int sqrtPeople = sqrt(countPeople());
-
+  unsigned int windowWidth = (n_ + 2*sqrtPeople + 4*offset)*cellSize;
+  unsigned int windowHeight = (n_ + 2*offset)*cellSize;
+  
   if (!displayCreated_) {
-    //create display
-    window_.create(sf::VideoMode((n_ + 2*sqrtPeople + 4*offset)*cellSize, (n_ + 2*offset)*cellSize), windowTitle, sf::Style::Close);
+    //create display    
+    window_.create(sf::VideoMode( windowWidth, windowHeight), windowTitle, sf::Style::Close);
     displayCreated_ = true;
   }
 
@@ -376,18 +377,27 @@ void Board::draw(int cellSize, int offset, std::string  const& windowTitle) {
 
   text.setFillColor(sf::Color::Red);
   text.setString("I: " + std::to_string(count(State::Infected)));
-  text.move(0,2*offset*cellSize + fontSize);
+  text.move(0,offset*cellSize + fontSize);
   window_.draw(text);
 
   text.setFillColor(sf::Color::Blue);
   text.setString("R: " + std::to_string(count(State::Recovered)));
-  text.move(0,2*offset*cellSize + fontSize);
+  text.move(0,offset*cellSize + fontSize);
   window_.draw(text);
 
   text.setFillColor(sf::Color::Red);
   text.setString("Q: " + std::to_string(peopleInQuarantine_));
-  text.move(0,2*offset*cellSize + fontSize);
+  text.move(0,offset*cellSize + fontSize);
   window_.draw(text);
+
+  if (frame != -1) {
+    //low right corner
+    text.setFillColor(sf::Color::White);
+    //text.setCharacterSize(fontSize/2);
+    text.setPosition(text.getPosition().x, windowHeight - offset*cellSize - fontSize);
+    text.setString("Frame: " + std::to_string(frame));
+    window_.draw(text);
+  }
 
   window_.display();
 }
@@ -414,7 +424,7 @@ void Board::animate(Disease const& disease, int infectedBeforeQuarantine, bool f
     std::cout << "S: " << count(State::Susceptible) << " - I: " << count(State::Infected) << 
                 " - R: " << count(State::Recovered) << " - Q: " << peopleInQuarantine_ << "\n\n";
     
-    draw(cellSize, offset, windowTitle);
+    draw(cellSize, offset, frame, windowTitle);
 
     std::cout << "Frame " << frame << '\n';
       
@@ -442,7 +452,7 @@ void Board::animate(Disease const& disease, int infectedBeforeQuarantine, bool f
     ++frame;
   }
 
-  draw();
+  draw(cellSize, offset, frame, windowTitle);
 
   std::cout << "Simulation ended.\n";
   std::cout << "Press RETURN to close the window\n";
