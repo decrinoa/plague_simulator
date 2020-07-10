@@ -38,6 +38,7 @@ class Board {
   inline double distance(int i, int j) {     //get distance between two cells
     return sqrt((i%n_ - j%n_)*(i%n_ - j%n_) + (i/n_ - j/n_)*(i/n_ - j/n_)); }
   
+  //vedere i commenti in board.cpp per capire perché esiste una placePople pubblica e una privata
   void placePeople(int numberOfPeople, State const&state, bool returnFromQuarantine);
   
 public:
@@ -64,8 +65,8 @@ public:
   //Impostare il valore su 0 per simulare un'assenza di quarantena.
   //Il parametro frameByFrame consente di scegliere tra un'animazione automatica e una che si ferma ad ogni frame, 
   //aspettando che l'utente clicchi il tasto INVIO
-  void animate(Disease const& disease, int infectedBeforeQuarantine = 1, bool move = true, int cellSize = -1, 
-                 int offset = 2, bool frameByFrame = false, std::string const& windowTitle = "Plague simulator");
+  void animate(Disease const& disease, int infectedBeforeQuarantine = 1, bool frameByFrame = false, bool move = true, int cellSize = -1, 
+                 int offset = 2, std::string const& windowTitle = "Plague simulator");
 
   void save(std::string const& fileName = "output.dat"); //stampa su doc dati per grafici 
 };
