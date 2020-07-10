@@ -12,7 +12,7 @@ int main() {
   griglia.placePeople(699);
   griglia.placePeople(10,State::Infected);
 
-  griglia.animate(tetano, 1, true);
+  griglia.animate(tetano);
   
   griglia.save("data.dat");
   
