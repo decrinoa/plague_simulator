@@ -9,8 +9,8 @@
 struct Disease {
   double const& beta;   //probability of infection being nearer than radius to an infected person
   double const& gamma;  //probability of recovery
-  double const& radius = 1.41421356237; //sqrt(2)
-  double const& manifestation = 0.5;
+  double const& radius; 
+  double const& manifestation;
 };
 
 enum class State{ Empty, Susceptible, Infected, Recovered}; //In un futuro aggiungere anche Dead
@@ -42,7 +42,7 @@ class Board {
   void placePeople(int numberOfPeople, State const&state, bool returnFromQuarantine);
   
 public:
-  inline Board(int n) : board_(n*n), n_{n}, displayCreated_{false} { assert(n > 0); };
+  inline Board(int n) : board_(n*n), n_{n}, displayCreated_{false}, peopleInQuarantine_{0} { assert(n > 0); };
   inline ~Board() { window_.~RenderWindow(); };
   
   State& state(unsigned int i);                                                         //get board[i]
@@ -57,7 +57,7 @@ public:
   
   //draw board with SFML. Offset è da intendere come espresso numero di celle, non in pixel
   //Use cellSize = -1 (default) to draw with the maximum size
-  void draw(int cellSize = -1, int offset = 2, std::string const& windowTitle = "Plague simulator");
+  void draw(int cellSize = -1, int offset = 2, int frame = -1, std::string const& windowTitle = "Plague simulator");
   
   //Chiama ripetutamente evolve, move e draw fino alla fine della simulazione.
   //Il parametro int infectedBeforQuarantine rappresenta il numero di persone che devono essere infette prima che si
