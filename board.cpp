@@ -83,10 +83,8 @@ void Board::placePeople(int numberOfPeople, State const&state, bool returnFromQu
   //Per capire se placePeople è stato chiamato da evolve (quando una persona guarita ritorna dalla quarantena) o se invece
   //è stato chiamato dall'utente, si è resa pubblica (quindi disponibile all'utente) solo la funzione senza bool.
   //Evolve invece chiamerà la funzione privata con il booleano = true.
-  if (!returnFromQuarantine && displayCreated_) {
+  if (!returnFromQuarantine && window_.isOpen())
     window_.close();
-    displayCreated_ = false;
-  }
   
   std::random_device gen;
   
@@ -304,10 +302,9 @@ void Board::draw(int cellSize, int offset, int frame, std::string const& windowT
   unsigned int windowWidth = (n_ + 2*sqrtPeople + 4*offset)*cellSize;
   unsigned int windowHeight = (n_ + 2*offset)*cellSize;
   
-  if (!displayCreated_) {
+  if (!window_.isOpen()) {
     //create display    
     window_.create(sf::VideoMode( windowWidth, windowHeight), windowTitle, sf::Style::Close);
-    displayCreated_ = true;
   }
 
   //update display
@@ -459,7 +456,6 @@ void Board::animate(Disease const& disease, int infectedBeforeQuarantine, bool f
   std::cin.ignore();
 
   window_.close();
-  displayCreated_ = false;  
 }
 
 void Board::save(std::string const& fileName) {
