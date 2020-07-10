@@ -70,8 +70,8 @@ void Board::change(int i) {
 }
 
 //  -PUBLIC-
-State& Board::state(int i) {
-  assert(i >= 0 && i <= board_.size());
+State& Board::state(unsigned int i) {
+  assert(i <= board_.size());
   return board_[i];
 }
 
