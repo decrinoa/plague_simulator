@@ -375,7 +375,7 @@ void Board::draw(int cellSize, int offset, std::string  const& windowTitle) {
   window_.display();
 }
 
-void Board::animate(Disease const& disease, int infectedBeforeQuarantine, bool move, bool frameByFrame, int cellSize, int offset, std::string const& windowTitle) {
+void Board::animate(Disease const& disease, int infectedBeforeQuarantine, bool move, int cellSize, int offset, bool frameByFrame, std::string const& windowTitle) {
   //assert solo di animate
   assert(infectedBeforeQuarantine >= 0);
   
