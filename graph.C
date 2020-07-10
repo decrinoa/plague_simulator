@@ -15,13 +15,13 @@ void graph () {
    mg->SetTitle("Epidemic curve;Time;People");
   
   I->SetLineColor(2);
-  I->SetLineWidth(4);
+  I->SetLineWidth(2);
   S->SetLineColor(kGreen);
-  S->SetLineWidth(4);
+  S->SetLineWidth(2);
   R->SetLineColor(kBlue);
-  R->SetLineWidth(4);
+  R->SetLineWidth(2);
   Q->SetLineColor(1);
-  Q->SetLineWidth(4);
+  Q->SetLineWidth(2);
   
   plague->SetFillColor(0);
   
