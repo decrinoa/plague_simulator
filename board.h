@@ -48,11 +48,23 @@ public:
   int count(State const& state);
   inline int countPeople() { return n_*n_ - count(State::Empty); };
   void placePeople(int numberOfPeople, State const&state = State::Susceptible); //places randomly nPeople on the board
-  void evolve(Disease &disease, bool quarantine = true);
+  void evolve(Disease const& disease, bool quarantine = true);
   void move();
   void print();
+  
   //draw board with SFML. Offset è da intendere come espresso numero di celle, non in pixel
-  void draw(int cellSize = -1, int offset = 2, std::string windowTitle = "Plague simulator");
+  //Use cellSize = -1 (default) to draw with the maximum size
+  void draw(int cellSize = -1, int offset = 2, std::string const& windowTitle = "Plague simulator");
+  
+  //Chiama ripetutamente evolve, move e draw fino alla fine della simulazione.
+  //Il parametro int infectedBeforQuarantine rappresenta il numero di persone che devono essere infette prima che si
+  //avviino le misure di quarantena. Impostandolo su 1 (default), la quarantena inizierà immediatamente.
+  //Impostare il valore su 0 per simulare un'assenza di quarantena.
+  //Il parametro frameByFrame consente di scegliere tra un'animazione automatica e una che si ferma ad ogni frame, 
+  //aspettando che l'utente clicchi il tasto INVIO
+  void animate(Disease const& disease, int infectedBeforeQuarantine = 1, bool move = true, bool frameByFrame = false,
+                int cellSize = -1, int offset = 2, std::string const& windowTitle = "Plague simulator");
+
   void save(std::string fileName = "output.dat"); //stampa su doc dati per grafici 
 };
 
