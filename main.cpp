@@ -8,7 +8,7 @@ int main() {
   Disease tetano{0.8, 0.01, 5, 0.5};
 
   griglia.placePeople(699);
-  griglia.placePeople(10,State::Infected);
+  griglia.placePeople(1,State::Infected);
 
   //ESEMPIO DI UTILIZZO DELLA CLASSE SENZA LA FUNZIONE Board::animate()
   /*
